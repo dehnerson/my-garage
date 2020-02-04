@@ -1,0 +1,1 @@
+export const CREATE_VEHICLLE = "CREATE_VEHICLLE";

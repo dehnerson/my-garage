@@ -1,26 +1,33 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { Route, Switch } from "react-router-dom";
+import { connect } from "react-redux";
+import ProtectedRoute from "./components/ProtectedRoute";
+import CssBaseline from '@material-ui/core/CssBaseline';
+import { ThemeProvider } from '@material-ui/core/styles';
+import theme from './theme';
+import Home from "./components/Home";
+import SignIn from "./components/SignIn";
 
-function App() {
+function App(props) {
+  const { isAuthenticated, isVerifying } = props;
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>m
-      </header>
-    </div>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Switch>
+        <ProtectedRoute exact path="/" component={Home}
+          isAuthenticated={isAuthenticated}
+          isVerifying={isVerifying}/>
+        <Route path="/signIn" component={SignIn} />
+      </Switch>
+    </ThemeProvider>
   );
 }
 
-export default App;
+function mapStateToProps(state) {
+  return {
+    isAuthenticated: !state.firebase.auth.isEmpty,
+    isVerifying: !state.firebase.auth.isLoaded
+  };
+}
+
+export default connect(mapStateToProps)(App);
