@@ -19,8 +19,18 @@ class Vehicles extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    vehicles: state.firestore.ordered.vehicles
+    signedInUid: state.firebase.auth.uid,
+    myVehicles: state.firestore.ordered.myVehicles
   }
 }
 
-export default compose(connect(mapStateToProps), firestoreConnect([{ collection: 'vehicles' }]))(Vehicles)
+export default compose(
+  connect(mapStateToProps),
+  firestoreConnect(props => [
+    {
+      collection: 'vehicles',
+      storeAs: 'myVehicles',
+      where: [['creator', '==', props.signedInUid]]
+    }
+  ])
+)(Vehicles);
