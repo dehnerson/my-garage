@@ -14,6 +14,7 @@ import { withStyles } from "@material-ui/styles";
 import Copyright from "./Copyright";
 import { signIn } from "../actions/signIn";
 import { connect } from "react-redux";
+import { compose } from "redux";
 import { Redirect } from "react-router-dom";
 
 
@@ -133,4 +134,4 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(SignIn));
+export default compose(withStyles(styles), (connect(mapStateToProps, mapDispatchToProps)(SignIn)));

@@ -1,8 +1,4 @@
-import {
-  SIGNIN_REQUEST,
-  SIGNIN_SUCCESS,
-  SIGNIN_FAILURE
-} from "../actions/signIn";
+import { SIGNIN_REQUEST, SIGNIN_SUCCESS, SIGNIN_FAILURE } from "../actions/signIn";
 
 export default (
   state = {
