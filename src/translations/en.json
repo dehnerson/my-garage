@@ -1,0 +1,8 @@
+{
+    "emailAdress": "Email adress",
+    "password": "Password",
+    "signIn": "Sign In",
+    "forgotPassword": "Forgot password?",
+    "noAccountSignUp": "Don't have an account? Sign Up",
+    "signInWithGoogle": "Sign In with Google"
+}

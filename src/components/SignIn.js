@@ -2,8 +2,6 @@ import React, { Component } from "react";
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
 import Link from '@material-ui/core/Link';
 import Paper from '@material-ui/core/Paper';
 import Box from '@material-ui/core/Box';
@@ -12,9 +10,10 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from "@material-ui/styles";
 import Copyright from "./Copyright";
-import { signIn } from "../actions/signIn";
+import { signIn, signInWithGoogle } from "../actions/signIn";
 import { connect } from "react-redux";
 import { Redirect } from "react-router-dom";
+import { withTranslation } from 'react-i18next';
 
 
 const styles = (theme) => ({
@@ -64,8 +63,12 @@ class SignIn extends Component {
     this.props.signIn(this.state);
   };
 
+  handleGoogleSignin = () => {
+    this.props.signInWithGoogle();
+  }
+
   render() {
-    const { classes, signInError, isAuthenticated } = this.props;
+    const { classes, signInError, isAuthenticated, t } = this.props;
 
     if (isAuthenticated) {
       return <Redirect to="/" />;
@@ -78,18 +81,14 @@ class SignIn extends Component {
               <Avatar className={classes.avatar}>
                 <LockOutlinedIcon />
               </Avatar>
-              <Typography component="h1" variant="h5">Sign in</Typography>
+      <Typography component="h1" variant="h5">{t('signIn')}</Typography>
               <form className={classes.form} noValidate>
                 <TextField variant="outlined" margin="normal" required fullWidth id="email"
-                  label="Email Address" name="email" autoComplete="email" autoFocus
+                  label={t('emailAdress')} name="email" autoComplete="email" autoFocus
                   onChange={this.handleEmailChange} />
                 <TextField variant="outlined" margin="normal" required fullWidth id="password"
-                  name="password" label="Password" type="password" autoComplete="current-password"
+                  name="password" label={t('password')} type="password" autoComplete="current-password"
                   onChange={this.handlePasswordChange} />
-                <FormControlLabel
-                  control={<Checkbox value="remember" color="primary" />}
-                  label="Remember me"
-                />
                 {signInError && (
                   <Typography component="p" className={classes.errorText}>
                     Incorrect email or password.
@@ -97,16 +96,17 @@ class SignIn extends Component {
                 )}
                 <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit}
                   onClick={this.handleSubmit}>
-                  Sign In
+                  {t('signIn')}
                 </Button>
                 <Grid container>
                   <Grid item xs>
-                    <Link href="#" variant="body2">Forgot password?</Link>
+                    <Link href="#" variant="body2">{t('forgotPassword')}</Link>
                   </Grid>
                   <Grid item>
-                    <Link href="#" variant="body2">Don't have an account? Sign Up</Link>
+                <Link href="#" variant="body2">{t('noAccountSignUp')}</Link>
                   </Grid>
                 </Grid>
+                <Button onClick={this.handleGoogleSignin}>{t('signInWithGoogle')}</Button>
                 <Box mt={5}>
                   <Copyright />
                 </Box>
@@ -119,18 +119,20 @@ class SignIn extends Component {
   }
 }
 
-function mapStateToProps(state) {
+const mapStateToProps = (state) => {
   return {
-    isLoggingIn: state.signIn.isSigningIn,
+    isSigningIn: state.signIn.isSigningIn,
     signInError: state.signIn.signInError,
-    isAuthenticated: !state.firebase.auth.isEmpty
+    isAuthenticated: !state.firebase.auth.isEmpty,
+    firebase: state.firebase
   };
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    signIn: (creds) => dispatch(signIn(creds))
+    signIn: (creds) => dispatch(signIn(creds)),
+    signInWithGoogle: () => dispatch(signInWithGoogle())
   }
 }
 
-export default withStyles(styles) (connect(mapStateToProps, mapDispatchToProps)(SignIn));
+export default withStyles(styles)(withTranslation()(connect(mapStateToProps, mapDispatchToProps)(SignIn)));
