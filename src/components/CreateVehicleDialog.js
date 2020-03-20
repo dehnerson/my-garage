@@ -21,15 +21,16 @@ const CreateVehicleDialog = (props) => {
 
     return (
         <Dialog open={props.open} TransitionComponent={Transition} keepMounted onClose={props.handleClose} aria-labelledby="alert-dialog-slide-title" aria-describedby="alert-dialog-slide-description">
-            <DialogTitle id="alert-dialog-slide-title">Create vehgicle</DialogTitle>
+            <DialogTitle id="alert-dialog-slide-title">Create vehicle</DialogTitle>
             <DialogContent>
-                <form>
-                    <TextField required label="License plate" variant="outlined"/>
-                </form>
+                <Button variant="contained" color="primary">Scan Fahrzeugschein</Button>
+                <TextField required label="License plate" variant="outlined" />
+                <TextField required label="Manufacturer" variant="outlined" />
+                <TextField required label="Model" variant="outlined" />
             </DialogContent>
             <DialogActions>
-                <Button onClick={props.handleClose}>Disagree</Button>
-                <Button onClick={handleCreateVehicle}>Agree</Button>
+                <Button onClick={props.handleClose}>Cancel</Button>
+                <Button onClick={handleCreateVehicle}>Create vehicle</Button>
             </DialogActions>
         </Dialog>
     )

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { Route } from "react-router-dom";
 import { connect } from "react-redux";
 import { signOut } from "../actions/signOut";
 import clsx from 'clsx';
@@ -162,12 +162,8 @@ class Home extends Component {
           <Container component='main' className={classes.main}>
             <div className={classes.appBarSpacer} />
             <Container maxWidth="lg" className={classes.container}>
-              <Router>
-                <Switch>
-                  <Route exact path="/vehicle/:vehicleID" component={Vehicle} />
-                  <Route exact path="/myVehicles" component={MyVehiclesList} />
-                </Switch>
-              </Router>
+              <Route exact path="/vehicle/:vehicleID" component={Vehicle} />
+              <Route exact path="/" component={MyVehiclesList} />
             </Container>
           </Container>
           <Copyright />

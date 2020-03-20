@@ -9,7 +9,7 @@ import AssignmentIcon from '@material-ui/icons/Assignment';
 
 export const mainDrawerItems = (
   <div>
-    <ListItem button component={Link} to="/myVehicles">
+    <ListItem button component={Link} to="/">
       <ListItemIcon>
         <DashboardIcon />
       </ListItemIcon>
