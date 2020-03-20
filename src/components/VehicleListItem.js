@@ -1,6 +1,8 @@
 import React from 'react';
+import { Link } from "react-router-dom";
 import ListItem from '@material-ui/core/ListItem';
-import Paper from '@material-ui/core/Paper';
+import ListItemAvatar from '@material-ui/core/ListItemAvatar';
+import ListItemText from '@material-ui/core/ListItemText';
 import Avatar from '@material-ui/core/Avatar';
 import CarIcon from '@material-ui/icons/DirectionsCar';
 
@@ -19,13 +21,14 @@ const VehicleListItem = (props) => {
     }
 
     return (
-        <ListItem>
-            <Paper>
+        <ListItem button component={Link} to={"/vehicle/" + vehicle.id}>
+            <ListItemAvatar>
                 {vehicle.imageURL ? <Avatar variant='rounded' alt={alter} src={vehicle.imageURL} /> : alter ? <Avatar variant='rounded'>{alter[0]}</Avatar> : <Avatar variant='rounded'><CarIcon /></Avatar>}
-                {vehicle.manufacturer && <p>Manufacturer: {vehicle.manufacturer}</p>}
-                {vehicle.model && <p>Model: {vehicle.model}</p>}
-                {vehicle.licensePlate && <p>License plate: {vehicle.licensePlate}</p>}
-            </Paper>
+            </ListItemAvatar>
+            {vehicle.manufacturer && <ListItemText primary={"Manufacturer: " + vehicle.manufacturer} />}
+            {vehicle.model && <p>Model: {vehicle.model}</p>}
+            {vehicle.licensePlate && <p>License plate: {vehicle.licensePlate}</p>}
+
         </ListItem>
     )
 }

@@ -34,10 +34,10 @@ const App = (props) => {
       <I18nextProvider i18n={i18next}>
         <Router>
           <Switch>
-            <ProtectedRoute exact path="/" component={Home}
+            <Route exact path="/signIn" component={SignIn} />
+            <ProtectedRoute path="/" component={Home}
               isAuthenticated={isAuthenticated}
               isVerifying={isVerifying} />
-            <Route path="/signIn" component={SignIn} />
           </Switch>
         </Router>
       </I18nextProvider>

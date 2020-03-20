@@ -1,27 +1,48 @@
-import React from 'react';
+import React, { Component } from "react";
 import { firestoreConnect } from "react-redux-firebase";
 import { connect } from 'react-redux';
 import Typography from '@material-ui/core/Typography';
 import List from '@material-ui/core/List';
 import VehicleListItem from './VehicleListItem';
+import Fab from '@material-ui/core/Fab';
+import AddIcon from '@material-ui/icons/Add';
+import CreateVehicleDialog from "./CreateVehicleDialog";
 
 
-const MyVehiclesList = (props) => {
-  const { myVehicles } = props;
+class MyVehiclesList extends Component {
+  state = { createVehicleDialogOpen: false };
 
-  if (myVehicles && myVehicles.length > 0) {
+  handleCreateVehicleDialogOpen = () => {
+    this.setState({ createVehicleDialogOpen: true });
+  };
+
+  handleCreateVehicleDialogClose = () => {
+    this.setState({ createVehicleDialogOpen: false });
+  };
+
+  render() {
+    const { myVehicles } = this.props;
+
+
+    if (myVehicles && myVehicles.length > 0) {
+      return (
+        <div>
+          <Typography component='h4' variant='h4'>My vehicles</Typography>
+          <List>{myVehicles.map((item) => <VehicleListItem key={item.id} vehicle={item} />)}</List>
+          <Fab color="primary" aria-label="add" onClick={this.handleCreateVehicleDialogOpen}>
+            <AddIcon />
+          </Fab>
+          <CreateVehicleDialog open={this.state.createVehicleDialogOpen} handleClose={this.handleCreateVehicleDialogClose} />
+        </div>
+      )
+    }
+
     return (
-      <div>
-        <Typography component='h4' variant='h4'>My vehicles</Typography>
-        <List>{myVehicles.map((item) => <VehicleListItem vehicle={item} />)}</List>
-      </div>
+      <p>You don't have any vehicles!</p>
     )
   }
-
-  return (
-    <p>You don't have any vehicles!</p>
-  )
 }
+
 
 const mapStateToProps = (state) => {
   return {

@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { connect } from "react-redux";
 import { signOut } from "../actions/signOut";
 import clsx from 'clsx';
@@ -18,10 +19,8 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import { withStyles } from "@material-ui/styles";
 import { mainDrawerItems, secondaryDrawerItems } from './DrawerItems';
 import MyVehiclesList from "./MyVehiclesList";
-import Fab from '@material-ui/core/Fab';
-import AddIcon from '@material-ui/icons/Add';
+import Vehicle from "./Vehicle";
 import Copyright from "./Copyright";
-import CreateVehicleDialog from "./CreateVehicleDialog";
 
 
 const drawerWidth = 240;
@@ -109,7 +108,7 @@ const styles = (theme) => ({
 
 
 class Home extends Component {
-  state = { drawerOpen: true, createVehicleDialogOpen: false };
+  state = { drawerOpen: true };
 
   handleLogout = () => {
     this.props.signOut();
@@ -127,16 +126,8 @@ class Home extends Component {
     this.setState({ drawerOpen: false });
   };
 
-  handleCreateVehicleDialogOpen = () => {
-    this.setState({ createVehicleDialogOpen: true });
-  };
-
-  handleCreateVehicleDialogClose = () => {
-    this.setState({ createVehicleDialogOpen: false });
-  };
-
   render() {
-    const { classes, isSigningOut, signOutError } = this.props;
+    const { classes } = this.props;
 
     return (
       <div className={classes.root}>
@@ -167,19 +158,20 @@ class Home extends Component {
           <Divider />
           <List>{secondaryDrawerItems}</List>
         </Drawer>
-        <Container className={classes.content} maxWidth="false">
+        <Container className={classes.content} maxWidth={false}>
           <Container component='main' className={classes.main}>
             <div className={classes.appBarSpacer} />
             <Container maxWidth="lg" className={classes.container}>
-              <MyVehiclesList />
-              <Fab color="primary" aria-label="add" onClick={this.handleCreateVehicleDialogOpen}>
-                <AddIcon />
-              </Fab>
+              <Router>
+                <Switch>
+                  <Route exact path="/vehicle/:vehicleID" component={Vehicle} />
+                  <Route exact path="/myVehicles" component={MyVehiclesList} />
+                </Switch>
+              </Router>
             </Container>
           </Container>
           <Copyright />
         </Container>
-        <CreateVehicleDialog open={this.state.createVehicleDialogOpen} handleClose={this.handleCreateVehicleDialogClose}/>
       </div>
     );
   }
