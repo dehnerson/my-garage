@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { connect } from "react-redux";
 import ProtectedRoute from "./components/ProtectedRoute";
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -32,14 +32,14 @@ const App = (props) => {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <I18nextProvider i18n={i18next}>
-        <Router>
+        <BrowserRouter>
           <Switch>
             <Route exact path="/signIn" component={SignIn} />
             <ProtectedRoute path="/" component={Home}
               isAuthenticated={isAuthenticated}
               isVerifying={isVerifying} />
           </Switch>
-        </Router>
+        </BrowserRouter>
       </I18nextProvider>
     </ThemeProvider>
   );
