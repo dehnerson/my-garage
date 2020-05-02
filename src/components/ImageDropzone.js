@@ -20,8 +20,10 @@ const useStyles = makeStyles((theme) => ({
         borderColor: 'rgba(255, 255, 255, 0.23)',
         '&:hover': {
             borderColor: 'white',
-            borderWidth: '1.5px',
         }
+    },
+    dropzoneNotEditable: {
+        borderStyle: 'solid',
     },
     thumbsContainer: {
         display: 'flex',
@@ -48,10 +50,10 @@ const ImageDropzone = (props) => {
         props.setFiles(props.files.concat(newFiles).slice(-props.imageAmount));
     }
 
-    const { getRootProps, getInputProps } = useDropzone({
+    let { getRootProps, getInputProps } = useDropzone({
         accept: 'image/*',
         onDrop: handleDrop
-    })
+    });
 
     const handleClick = (e, image) => {
         setFocusedImage(image);
@@ -77,7 +79,7 @@ const ImageDropzone = (props) => {
 
     let thumbsFiles = [];
 
-    if (props.files) {
+    if (!props.notEditable && props.files) {
         thumbsFiles = props.files.map((file, index) => (
             <Chip key={file.name} clickable onClick={e => handleClick(e, { url: file.preview, alt: file.name })} onDelete={e => handleFileDelete(index)} label={file.name} avatar={<Avatar src={file.preview} />} className={classes.thumb} />
         ));
@@ -87,7 +89,7 @@ const ImageDropzone = (props) => {
 
     if (props.images) {
         thumbsImages = props.images.map((image, index) => (
-            <Chip key={image.path} clickable onClick={e => handleClick(e, image)} onDelete={e => handleImageDelete(index)} label={image.path && image.path.split('/').pop()} avatar={<Avatar src={image.url} />} className={classes.thumb} />
+            <Chip key={image.path} clickable onClick={e => handleClick(e, image)} onDelete={props.notEditable ? null : e => handleImageDelete(index)} label={image.path && image.path.split('/').pop()} avatar={<Avatar src={image.url} />} className={classes.thumb} />
         ));
     }
 
@@ -98,14 +100,21 @@ const ImageDropzone = (props) => {
         }
     }, [props.files]);
 
+    if (props.notEditable) {
+        getRootProps = () => null;
+        getInputProps = () => null;
+    }
+
     return (
         <div>
-            <Container maxWidth='sm' className={clsx(classes.dropzone, props.className)} {...getRootProps()}>
-                <input {...getInputProps()} />
+            <Container maxWidth='sm' className={clsx(props.className, classes.dropzone, { [classes.dropzoneNotEditable]: props.notEditable })} {...getRootProps()}>
+                {!props.notEditable &&
+                    <input {...getInputProps()} />
+                }
                 <InputLabel>
                     <Typography variant='subtitle1'>{props.title}</Typography>
                 </InputLabel>
-                {thumbsFiles.length === 0 && thumbsImages.length === 0 &&
+                {thumbsFiles.length === 0 && thumbsImages.length === 0 && !props.notEditable &&
                     <InputLabel>
                         <Typography variant='body2'>Drag 'n' drop some files here, or click to select files</Typography>
                     </InputLabel>

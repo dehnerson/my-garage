@@ -35,14 +35,14 @@ const MaintenanceWork = (props) => {
 
     const { vehicleId, t } = props;
 
-    const maintenanceWork = useSelector(state => state.firestore.ordered['maintenanceWork.' + props.vehicleId]);
-
     useFirestoreConnect([{
         collection: 'vehicles',
         doc: props.vehicleId,
         subcollections: [{ collection: 'maintenanceWork' }],
         storeAs: 'maintenanceWork.' + vehicleId
     }]);
+
+    const maintenanceWork = useSelector(state => state.firestore.ordered['maintenanceWork.' + props.vehicleId]);
 
     const changeFocusedMaintenanceWork = (elements) => {
         setFocusedMaintenanceWork({ ...focusedMaintenanceWork, ...elements });
