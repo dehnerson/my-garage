@@ -1,57 +1,190 @@
-import React from 'react';
-import { compose } from 'redux'
-import { firestoreConnect } from "react-redux-firebase";
-import { connect } from 'react-redux';
-import Card from '@material-ui/core/Card';
-import CardHeader from '@material-ui/core/CardHeader';
-import IconButton from '@material-ui/core/IconButton';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
-import CardActions from '@material-ui/core/CardActions';
-import CardContent from '@material-ui/core/CardContent';
-import Typography from '@material-ui/core/Typography';
-import Paper from '@material-ui/core/Paper';
-import Avatar from '@material-ui/core/Avatar';
-import CarIcon from '@material-ui/icons/DirectionsCar';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
+import React, { useState, useEffect } from "react";
+import { useSelector, useDispatch } from 'react-redux';
+import queryString from 'query-string';
+import { withTranslation } from 'react-i18next';
+import cloneDeep from 'lodash/cloneDeep';
+import clsx from 'clsx';
+import { makeStyles } from '@material-ui/core/styles';
+import { Card, CardHeader, IconButton, Menu, MenuItem, CardContent, CardActions, TextField, Collapse, Fade, Grid, Slide } from '@material-ui/core';
+import { MoreVert, ExpandMore, Save, Clear } from '@material-ui/icons';
+import { updateVehicle, deleteVehicle, addVehicleDocumentImages } from "../actions/vehicles";
+import VehicleAvatar from "./VehicleAvatar";
+import AddTextFields from "./AddTextFields";
+import MaintenanceWork from "./MaintenanceWork";
+import ImageDropzone from "./ImageDropzone";
+
+
+const useStyles = makeStyles((theme) => ({
+    mainCardContent: {
+        display: 'flex',
+        flexFlow: 'wrap',
+        paddingBottom: 0
+    },
+    break: {
+        flexBasis: '100%',
+        width: 0,
+        height: 0,
+        overflow: 'hidden'
+    },
+    addFieldsCardContent: {
+        paddingTop: 0
+    },
+    cardActionsRight: {
+        display: 'flex',
+        marginLeft: 'auto',
+    },
+    expand: {
+        transform: 'rotate(0deg)',
+        transition: theme.transitions.create('transform', {
+            duration: theme.transitions.duration.shortest,
+        }),
+    },
+    expandOpen: {
+        transform: 'rotate(180deg)',
+    },
+    images: {
+        marginTop: theme.spacing(2)
+    }
+}));
 
 
 const Vehicle = (props) => {
-    const { vehicle, maintenanceWork } = props;
+    const { t } = props;
 
-    if (vehicle) {
-        let alter;
+    const [urlSearch] = useState(queryString.parse(props.location.search));
+    const [vehicle, setVehicle] = useState(null);
+    const [newDocumentImages, setNewDocumentImages] = useState([]);
+    const [vehicleEdit, setVehicleEdit] = useState(false);
+    const [anchorEl, setAnchorEl] = useState(null);
+    const [expanded, setExpanded] = useState(false);
 
-        if (vehicle.model) {
-            alter = vehicle.model;
+    let vehicleEditable = false;
 
-            if (vehicle.manufacturer) {
-                alter = vehicle.manufacturer + " " + vehicle.model;
-            }
+    const propsVehicle = useSelector(state => {
+        let ret = null;
+
+        if (state.firestore.data.myVehicles) {
+            ret = state.firestore.data.myVehicles[urlSearch.id];
+
+            vehicleEditable = Boolean(ret);
         }
 
-        return (
-            <div>
-                <Card>
-                    <CardHeader avatar={vehicle.imageURL ? <Avatar variant='rounded' alt={alter} src={vehicle.imageURL} /> : alter ? <Avatar variant='rounded'>{alter[0]}</Avatar> : <Avatar variant='rounded'><CarIcon /></Avatar>}
-                        title={alter}
-                        action={<IconButton aria-label="settings"><MoreVertIcon /></IconButton>} />
-                    <CardContent>
-                        {vehicle.licensePlate && <Typography component="p">License plate: {vehicle.licensePlate}</Typography>}
-                    </CardContent>
-                </Card>
-                {maintenanceWork && maintenanceWork.length > 0 &&
-                    <Paper>
-                        <List>{maintenanceWork.map((item) =>
-                            <ListItem key={item.id}>
-                                <ListItemText primary={item.date.seconds} />
-                            </ListItem>)}
-                        </List>
-                    </Paper>
-                }
+        if (ret == null && state.firestore.data.vehiclesSharedWithMe) {
+            ret = state.firestore.data.vehiclesSharedWithMe[urlSearch.id];
+        }
 
-            </div>
+        return ret;
+    });
+
+    useEffect(() => {
+        if (!vehicleEdit) {
+            setVehicle(cloneDeep(propsVehicle));
+        }
+    }, [propsVehicle, vehicleEdit]);
+
+    const dispatch = useDispatch();
+
+    const handleMenuOpen = (event) => {
+        setAnchorEl(event.currentTarget);
+    }
+
+    const handleMenuClose = () => {
+        setAnchorEl(null);
+    }
+
+    const handleVehicleDelete = () => {
+        handleMenuClose();
+        dispatch(deleteVehicle(urlSearch.id));
+    }
+
+    const handleExpandClick = () => {
+        setExpanded(!expanded);
+    };
+
+    const handleNewDocumentImages = (documentImages) => {
+        setNewDocumentImages(documentImages);
+        setVehicleEdit(true);
+    }
+
+    const setVehicleUpdate = (changes) => {
+        setVehicle({ ...vehicle, ...changes });
+        setVehicleEdit(true);
+    }
+
+    const saveVehicleUpdate = () => {
+        dispatch(updateVehicle(urlSearch.id, vehicle));
+
+        if (newDocumentImages.length > 0) {
+            dispatch(addVehicleDocumentImages(urlSearch.id, newDocumentImages));
+            setNewDocumentImages([]);
+        }
+
+        setVehicleEdit(false);
+    }
+
+    const cancelVehicleUpdate = () => {
+        setVehicle(props.vehicle);
+        setNewDocumentImages([]);
+        setVehicleEdit(false);
+    }
+
+    const classes = useStyles();
+
+    const inputProps = { readOnly: !vehicleEditable };
+
+    if (vehicle) {
+        return (
+            <Grid container direction="column" justify="flex-start" alignItems="stretch">
+                <Card>
+                    <CardHeader avatar={<VehicleAvatar title={vehicle.primaryTitle} sourceUrl={vehicle.image && vehicle.image.url} />}
+                        title={vehicle.primaryTitle}
+                        action={<IconButton onClick={handleMenuOpen} aria-controls="fade-menu" aria-haspopup="true" aria-label="settings"><MoreVert /></IconButton>}>
+                    </CardHeader >
+                    <CardContent className={classes.mainCardContent}>
+                        <TextField inputProps={inputProps} variant="outlined" size="small" margin='dense' label={t('manufacturer')} value={vehicle.manufacturer}
+                            onChange={e => setVehicleUpdate({ manufacturer: e.target.value })} />
+                        <TextField inputProps={inputProps} variant="outlined" size="small" margin='dense' label={t('model')} value={vehicle.model}
+                            onChange={e => setVehicleUpdate({ model: e.target.value })} />
+                        <TextField inputProps={inputProps} variant="outlined" size="small" margin='dense' label={t('version')} value={vehicle.version}
+                            onChange={e => setVehicleUpdate({ version: e.target.value })} />
+                        <div className={classes.break} />
+                        <TextField inputProps={inputProps} variant="outlined" size="small" margin='dense' label={t('licensePlate')} value={vehicle.licensePlate}
+                            onChange={e => setVehicleUpdate({ licensePlate: e.target.value })} />
+                        <TextField inputProps={inputProps} variant="outlined" size="small" margin='dense' label={t('vin')} value={vehicle.vin}
+                            onChange={e => setVehicleUpdate({ vin: e.target.value })} />
+                        <div className={classes.break} />
+                        <TextField inputProps={inputProps} variant="outlined" size="small" margin='dense' label={t('owner')} value={vehicle.owner}
+                            onChange={e => setVehicleUpdate({ owner: e.target.value })} />
+                    </CardContent>
+                    <CardActions disableSpacing>
+                        <div className={classes.cardActionsRight}>
+                            <Slide in={vehicleEdit} direction='up'>
+                                <div>
+                                    <IconButton aria-label="cancel" onClick={cancelVehicleUpdate}> <Clear /> </IconButton>
+                                    <IconButton aria-label="save" onClick={saveVehicleUpdate}> <Save /> </IconButton>
+                                </div>
+                            </Slide>
+                            <IconButton onClick={handleExpandClick} aria-expanded={expanded} aria-label="show more" className={clsx(classes.expand, { [classes.expandOpen]: expanded })}>
+                                <ExpandMore />
+                            </IconButton>
+                        </div>
+                    </CardActions>
+                    <Collapse in={expanded} timeout="auto">
+                        <CardContent className={classes.addFieldsCardContent}>
+                            <AddTextFields notEditable={!vehicleEditable} addTextFields={vehicle.addFields} onChanged={newAddFields => setVehicleUpdate({ addFields: newAddFields })} />
+                            <ImageDropzone title={t('vehicleDocumentImages')} imageAmount={5} className={classes.images}
+                                images={vehicle.documentImages} setImages={newImages => setVehicleUpdate({ documentImages: newImages })}
+                                files={newDocumentImages} setFiles={handleNewDocumentImages} />
+                        </CardContent>
+                    </Collapse>
+                </Card >
+                <Menu anchorEl={anchorEl} open={anchorEl != null} onClose={handleMenuClose} TransitionComponent={Fade}>
+                    {vehicleEditable &&
+                        <MenuItem onClick={handleVehicleDelete}>{t('delete')}</MenuItem>
+                    }
+                </Menu>
+                <MaintenanceWork vehicleId={urlSearch.id} />
+            </Grid >
         )
     }
     else {
@@ -59,24 +192,5 @@ const Vehicle = (props) => {
     }
 }
 
-const mapStateToProps = (state) => {
-    return {
-        vehicle: state.firestore.data.vehicle,
-        maintenanceWork: state.firestore.ordered.maintenanceWork
-    }
-}
 
-export default compose(
-    firestoreConnect(props => [{
-        collection: 'vehicles',
-        doc: props.match.params.vehicleID,
-        storeAs: 'vehicle'
-    },
-    {
-        collection: 'vehicles',
-        doc: props.match.params.vehicleID,
-        subcollections: [{ collection: 'maintenanceWork' }],
-        storeAs: 'maintenanceWork'
-    }]),
-    connect(mapStateToProps)
-)(Vehicle);
+export default withTranslation()(Vehicle);

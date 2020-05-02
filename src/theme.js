@@ -14,7 +14,22 @@ const theme = createMuiTheme({
     error: {
       main: red.A400,
     },
-  },
+  }
 });
+
+theme.overrides = {
+  MuiPaper: {
+    root: {
+      display: 'flex',
+      flexDirection: 'column'
+    }
+  },
+  MuiFab: {
+    root: {
+      margin: theme.spacing(2),
+      alignSelf: 'flex-end'
+    }
+  }
+}
 
 export default theme;

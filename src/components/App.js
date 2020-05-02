@@ -1,16 +1,17 @@
 import React from "react";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { connect } from "react-redux";
-import ProtectedRoute from "./components/ProtectedRoute";
+import ProtectedRoute from "./ProtectedRoute";
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { ThemeProvider } from '@material-ui/core/styles';
-import theme from './theme';
-import Home from "./components/Home";
-import SignIn from "./components/SignIn";
+import theme from '../theme';
+import Home from "./Home";
+import SignIn from "./SignIn";
+import SignUp from "./SignUp";
 import { I18nextProvider } from 'react-i18next';
 import i18next from 'i18next';
-import de from "./translations/de.json";
-import en from "./translations/en.json";
+import de from "../translations/de.json";
+import en from "../translations/en.json";
 
 i18next.init({
   interpolation: { escapeValue: false },
@@ -35,6 +36,7 @@ const App = (props) => {
         <BrowserRouter>
           <Switch>
             <Route exact path="/signIn" component={SignIn} />
+            <Route exact path="/signUp" component={SignUp} />
             <ProtectedRoute path="/" component={Home}
               isAuthenticated={isAuthenticated}
               isVerifying={isVerifying} />

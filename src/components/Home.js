@@ -1,190 +1,91 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 import { Route } from "react-router-dom";
-import { connect } from "react-redux";
-import { signOut } from "../actions/signOut";
+import { useFirestoreConnect } from 'react-redux-firebase';
+import { useSelector } from 'react-redux';
 import clsx from 'clsx';
-import Drawer from '@material-ui/core/Drawer';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import List from '@material-ui/core/List';
-import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
-import IconButton from '@material-ui/core/IconButton';
-import Badge from '@material-ui/core/Badge';
-import Container from '@material-ui/core/Container';
-import MenuIcon from '@material-ui/icons/Menu';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import NotificationsIcon from '@material-ui/icons/Notifications';
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import { withStyles } from "@material-ui/styles";
-import { mainDrawerItems, secondaryDrawerItems } from './DrawerItems';
-import MyVehiclesList from "./MyVehiclesList";
+import { Container, useMediaQuery } from '@material-ui/core';
+import { makeStyles, useTheme } from '@material-ui/styles';
+import TopBar from "./TopBar";
+import SideBar from './SideBar';
+import Footer from "./Footer";
+import Breadcrumb from "./Breadcrumb";
+import VehicleLists from "./VehicleLists";
 import Vehicle from "./Vehicle";
-import Copyright from "./Copyright";
+import Profile from "./Profile";
 
 
-const drawerWidth = 240;
-
-const styles = (theme) => ({
-  root: {
+const useStyles = makeStyles(theme => ({
+  container: {
+    height: '100vh',
+    padding: 0,
     display: 'flex',
+    flexDirection: 'column'
   },
-  toolbar: {
-    paddingRight: 24, // keep right padding when drawer closed
-  },
-  toolbarIcon: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    padding: '0 8px',
-    ...theme.mixins.toolbar,
-  },
-  appBar: {
-    zIndex: theme.zIndex.drawer + 1,
-    transition: theme.transitions.create(['width', 'margin'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-  },
-  appBarShift: {
-    marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(['width', 'margin'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  },
-  menuButton: {
-    marginRight: 36,
-  },
-  menuButtonHidden: {
-    display: 'none',
-  },
-  title: {
-    flexGrow: 1,
-  },
-  drawerPaper: {
-    position: 'relative',
-    whiteSpace: 'nowrap',
-    width: drawerWidth,
-    transition: theme.transitions.create('width', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  },
-  drawerPaperClose: {
-    overflowX: 'hidden',
-    transition: theme.transitions.create('width', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-    width: theme.spacing(7),
-    [theme.breakpoints.up('sm')]: {
-      width: theme.spacing(9),
-    },
-  },
-  appBarSpacer: theme.mixins.toolbar,
-  content: {
-    display: 'flex',
-    flexDirection: 'column',
-    minHeight: '100vh',
-    padding: 0
+  sideBarSpacer: {
+    marginLeft: 240
   },
   main: {
-    flexGrow: 1,
-    overflow: 'auto',
-  },
-  container: {
-    paddingTop: theme.spacing(4),
-    paddingBottom: theme.spacing(4),
-  },
-  paper: {
-    padding: theme.spacing(2),
-    display: 'flex',
-    overflow: 'auto',
-    flexDirection: 'column',
-  },
-});
-
-
-class Home extends Component {
-  state = { drawerOpen: true };
-
-  handleLogout = () => {
-    this.props.signOut();
-  };
-
-  handleCreateVehicle = () => {
-    this.props.createVehicle();
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(2),
+    [theme.breakpoints.up('sm')]: {
+      marginTop: theme.spacing(3),
+      marginBottom: theme.spacing(3)
+    },
+    [theme.breakpoints.up('md')]: {
+      marginTop: theme.spacing(8),
+      marginBottom: theme.spacing(8)
+    }
   }
+}));
 
-  handleDrawerOpen = () => {
-    this.setState({ drawerOpen: true });
+
+const Home = () => {
+  const classes = useStyles();
+  const theme = useTheme();
+
+  const isDesktop = useMediaQuery(theme.breakpoints.up('lg'));
+
+  const [sideBarOpen, setSideBarOpen] = useState(false);
+
+  const shouldSidebarOpen = isDesktop ? true : sideBarOpen;
+
+  const handleSidebarOpen = () => {
+    setSideBarOpen(true);
   };
 
-  handleDrawerClose = () => {
-    this.setState({ drawerOpen: false });
+  const handleSidebarClose = () => {
+    setSideBarOpen(false);
   };
 
-  render() {
-    const { classes } = this.props;
+  const uid = useSelector(state => state.firebase.auth.uid);
 
-    return (
-      <div className={classes.root}>
-        <AppBar position="absolute" className={clsx(classes.appBar, this.state.drawerOpen && classes.appBarShift)}>
-          <Toolbar className={classes.toolbar}>
-            <IconButton edge="start" aria-label="open drawer" onClick={this.handleDrawerOpen} className={clsx(classes.menuButton, this.state.drawerOpen && classes.menuButtonHidden)}>
-              <MenuIcon />
-            </IconButton>
-            <Typography component="h1" variant="h6" noWrap className={classes.title}>My Garage</Typography>
-            <IconButton>
-              <Badge badgeContent={4} color="secondary">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
-            <IconButton onClick={this.handleLogout}>
-              <ExitToAppIcon />
-            </IconButton>
-          </Toolbar>
-        </AppBar>
-        <Drawer variant="permanent" classes={{ paper: clsx(classes.drawerPaper, !this.state.drawerOpen && classes.drawerPaperClose) }} open={this.state.drawerOpen}>
-          <div className={classes.toolbarIcon}>
-            <IconButton onClick={this.handleDrawerClose}>
-              <ChevronLeftIcon />
-            </IconButton>
-          </div>
-          <Divider />
-          <List>{mainDrawerItems}</List>
-          <Divider />
-          <List>{secondaryDrawerItems}</List>
-        </Drawer>
-        <Container className={classes.content} maxWidth={false}>
-          <Container component='main' className={classes.main}>
-            <div className={classes.appBarSpacer} />
-            <Container maxWidth="lg" className={classes.container}>
-              <Route exact path="/vehicle/:vehicleID" component={Vehicle} />
-              <Route exact path="/" component={MyVehiclesList} />
-            </Container>
-          </Container>
-          <Copyright />
-        </Container>
-      </div>
-    );
-  }
+  useFirestoreConnect([
+    {
+      collection: 'vehicles',
+      where: [['creator', '==', uid], ['active', '==', true]],
+      storeAs: 'myVehicles'
+    },
+    {
+      collection: 'vehicles',
+      where: [['sharedWith', 'array-contains', uid], ['active', '==', true]],
+      storeAs: 'vehiclesSharedWithMe'
+    }
+  ]);
 
+  return (
+    <div className={clsx(classes.container, { [classes.sideBarSpacer]: isDesktop })}>
+      <TopBar onSidebarOpen={handleSidebarOpen} />
+      <SideBar variant={isDesktop ? 'persistent' : 'temporary'} open={shouldSidebarOpen} onClose={handleSidebarClose} />
+      <Container component='main' maxWidth="md" className={classes.main} >
+        <Breadcrumb></Breadcrumb>
+        <Route exact path="/" component={VehicleLists} />
+        <Route exact path="/vehicle" component={Vehicle} />
+        <Route exact path="/profile" component={Profile} />
+      </Container>
+      <Footer />
+    </div>
+  );
 }
 
-const mapStateToProps = (state) => {
-  return {
-    isSigningOut: state.signOut.isSigningOut,
-    signOutError: state.signOut.signOutError
-  };
-}
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    signOut: () => dispatch(signOut())
-  }
-}
-
-export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(Home));
+export default Home;
