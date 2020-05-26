@@ -71,7 +71,7 @@ const MaintenanceWork = (props) => {
     const classes = useStyles();
 
     return (
-        <Paper className={classes.maintenancePaper}>
+        <Paper component={"section"} className={classes.maintenancePaper}>
             <List aria-labelledby="nested-list-subheader"
                 subheader={<ListSubheader>Maintenance work</ListSubheader>}>
                 {maintenanceWork && maintenanceWork.length > 0 &&

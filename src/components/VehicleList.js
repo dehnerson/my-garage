@@ -34,7 +34,7 @@ const VehicleList = (props) => {
   }
 
   return (
-    <Paper {...paperProps}>
+    <Paper component={"section"} {...paperProps}>
       {content}
       {showFab &&
         <Tooltip title={t('createVehicle')}>

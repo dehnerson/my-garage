@@ -123,7 +123,6 @@ const Vehicle = (props) => {
     }
 
     const cancelVehicleUpdate = () => {
-        setVehicle(props.vehicle);
         setNewDocumentImages([]);
         setVehicleEdit(false);
     }
@@ -134,8 +133,8 @@ const Vehicle = (props) => {
 
     if (vehicle) {
         return (
-            <Grid container direction="column" justify="flex-start" alignItems="stretch">
-                <Card>
+            <Grid component={"article"} container direction="column" justify="flex-start" alignItems="stretch">
+                <Card component={"section"}>
                     <CardHeader avatar={<VehicleAvatar title={vehicle.primaryTitle} sourceUrl={vehicle.image && vehicle.image.url} />}
                         title={vehicle.primaryTitle}
                         action={<IconButton onClick={handleMenuOpen} aria-controls="fade-menu" aria-haspopup="true" aria-label="settings"><MoreVert /></IconButton>}>

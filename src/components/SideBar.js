@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { connect } from "react-redux";
 import { signOut } from "../actions/auth";
 import { makeStyles } from '@material-ui/styles';
@@ -36,7 +35,7 @@ const SideBar = (props) => {
 
     return (
         <Drawer anchor="left" classes={{ paper: classes.drawer }} onClose={onClose} open={open} variant={variant}>
-            <div className={classes.root}>
+            <nav className={classes.root}>
                 <ProfileCompact />
                 <Divider className={classes.divider} />
                 <List>
@@ -55,16 +54,9 @@ const SideBar = (props) => {
                 </List>
                 <Divider className={classes.divider} />
                 <Button onClick={signOut} startIcon={<InputIcon />}>Sign out</Button>
-            </div>
+            </nav>
         </Drawer>
     );
-};
-
-SideBar.propTypes = {
-    className: PropTypes.string,
-    onClose: PropTypes.func,
-    open: PropTypes.bool.isRequired,
-    variant: PropTypes.string.isRequired
 };
 
 const mapDispatchToProps = (dispatch) => {

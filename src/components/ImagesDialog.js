@@ -24,11 +24,11 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 
 const ImagesDialog = (props) => {
-    const { handleClose, src, alt } = props;
+    const { open, handleClose, src, alt } = props;
     const classes = useStyles();
 
     return (
-        <Dialog fullScreen open={props.open} TransitionComponent={Transition} onClose={handleClose} onClick={handleClose} PaperProps={{ classes: { root: classes.paper } }}>
+        <Dialog fullScreen open={open} TransitionComponent={Transition} onClose={handleClose} onClick={handleClose} PaperProps={{ classes: { root: classes.paper } }}>
             <Container maxWidth='lg' className={classes.container}>
                 <img src={src} alt={alt} onClick={e => e.stopPropagation()} className={classes.image} />
             </Container>

@@ -21,12 +21,12 @@ const VehicleLists = (props) => {
     const vehiclesSharedWithMe = useSelector(state => state.firestore.ordered.vehiclesSharedWithMe);
 
     return (
-        <div>
+        <article>
             <VehicleList title={t('myVehicles')} vehicles={myVehicles} showFab={true} />
             {vehiclesSharedWithMe && vehiclesSharedWithMe.length > 0 &&
                 < VehicleList title={t('vehiclesSharedWithMe')} vehicles={vehiclesSharedWithMe} paperProps={{ className: classes.spacer }} />
             }
-        </div>
+        </article>
     )
 }
 

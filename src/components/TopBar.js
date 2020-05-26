@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { withTranslation } from 'react-i18next';
-import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
 import { Link, AppBar, Toolbar, Badge, Hidden, IconButton, Typography, Tooltip } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
@@ -26,8 +25,7 @@ const useStyles = makeStyles(theme => ({
     },
     signOutButton: {
         marginLeft: theme.spacing(1)
-    },
-    appBarSpacer: theme.mixins.toolbar,
+    }
 }));
 
 const TopBar = (props) => {
@@ -38,35 +36,28 @@ const TopBar = (props) => {
     const [notifications] = useState([]);
 
     return (
-        <div className={classes.appBarSpacer}>
-            <AppBar className={classes.root}>
-                <Toolbar>
-                    <Hidden lgUp>
-                        <IconButton className={classes.menuButton} onClick={onSidebarOpen}>
-                            <MenuIcon />
-                        </IconButton>
-                    </Hidden>
-                    <Typography className={classes.title} variant="h6"><Link color="inherit" href="/">My Garage</Link></Typography>
-                    <div className={classes.flexGrow} />
-                    <Tooltip title={t('notifications')}>
-                        <IconButton color="inherit">
-                            <Badge badgeContent={notifications.length} color="primary" variant="dot"><NotificationsIcon /></Badge>
-                        </IconButton>
+        <AppBar position={"relative"} className={classes.root}>
+            <Toolbar>
+                <Hidden lgUp>
+                    <IconButton className={classes.menuButton} onClick={onSidebarOpen}>
+                        <MenuIcon />
+                    </IconButton>
+                </Hidden>
+                <Typography className={classes.title} variant="h6"><Link color="inherit" href="/">My Garage</Link></Typography>
+                <div className={classes.flexGrow} />
+                <Tooltip title={t('notifications')}>
+                    <IconButton color="inherit">
+                        <Badge badgeContent={notifications.length} color="primary" variant="dot"><NotificationsIcon /></Badge>
+                    </IconButton>
+                </Tooltip>
+                <Hidden xsDown>
+                    <Tooltip title={t('signOut')}>
+                        <IconButton className={classes.signOutButton} onClick={signOut}><InputIcon /></IconButton>
                     </Tooltip>
-                    <Hidden xsDown>
-                        <Tooltip title={t('signOut')}>
-                            <IconButton className={classes.signOutButton} onClick={signOut}><InputIcon /></IconButton>
-                        </Tooltip>
-                    </Hidden>
-                </Toolbar>
-            </AppBar>
-        </div >
+                </Hidden>
+            </Toolbar>
+        </AppBar>
     );
-};
-
-TopBar.propTypes = {
-    className: PropTypes.string,
-    onSidebarOpen: PropTypes.func
 };
 
 const mapDispatchToProps = (dispatch) => {

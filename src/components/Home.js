@@ -76,11 +76,13 @@ const Home = () => {
     <div className={clsx(classes.container, { [classes.sideBarSpacer]: isDesktop })}>
       <TopBar onSidebarOpen={handleSidebarOpen} />
       <SideBar variant={isDesktop ? 'persistent' : 'temporary'} open={shouldSidebarOpen} onClose={handleSidebarClose} />
-      <Container component='main' maxWidth="md" className={classes.main} >
+      <Container maxWidth="md" className={classes.main} >
         <Breadcrumb></Breadcrumb>
-        <Route exact path="/" component={VehicleLists} />
-        <Route exact path="/vehicle" component={Vehicle} />
-        <Route exact path="/profile" component={Profile} />
+        <main>
+          <Route exact path="/" component={VehicleLists} />
+          <Route exact path="/vehicle" component={Vehicle} />
+          <Route exact path="/profile" component={Profile} />
+        </main>
       </Container>
       <Footer />
     </div>
