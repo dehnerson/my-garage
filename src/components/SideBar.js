@@ -13,7 +13,7 @@ const useStyles = makeStyles(theme => ({
     drawer: {
         width: 240,
         [theme.breakpoints.up('lg')]: {
-            marginTop: 64,
+            paddingTop: 64,
         }
     },
     root: {

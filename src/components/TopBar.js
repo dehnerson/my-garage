@@ -12,11 +12,6 @@ const useStyles = makeStyles(theme => ({
     root: {
         boxShadow: 'none'
     },
-    title: {
-        [theme.breakpoints.up('lg')]: {
-            marginLeft: 240
-        },
-    },
     flexGrow: {
         flexGrow: 1
     },
@@ -43,7 +38,7 @@ const TopBar = (props) => {
                         <MenuIcon />
                     </IconButton>
                 </Hidden>
-                <Typography className={classes.title} variant="h6"><Link color="inherit" href="/">My Garage</Link></Typography>
+                <Typography variant="h6"><Link color="inherit" href="/">My Garage</Link></Typography>
                 <div className={classes.flexGrow} />
                 <Tooltip title={t('notifications')}>
                     <IconButton color="inherit">
