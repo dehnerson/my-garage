@@ -170,7 +170,7 @@ const Vehicle = (props) => {
                     </CardActions>
                     <Collapse in={expanded} timeout="auto">
                         <CardContent className={classes.addFieldsCardContent}>
-                            <AddTextFields notEditable={!vehicleEditable} addTextFields={vehicle.addFields} onChanged={newAddFields => setVehicleUpdate({ addFields: newAddFields })} />
+                            <AddTextFields notEditable={!vehicleEditable} area={'vehicle'} addTextFields={vehicle.addFields} onChanged={newAddFields => setVehicleUpdate({ addFields: newAddFields })} />
                             <ImageDropzone title={t('vehicleDocumentImages')} imageAmount={5} className={classes.images}
                                 images={vehicle.documentImages} setImages={newImages => setVehicleUpdate({ documentImages: newImages })}
                                 files={newDocumentImages} setFiles={handleNewDocumentImages}
