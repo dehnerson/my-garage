@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { withTranslation } from 'react-i18next';
+import { useFirestoreConnect } from 'react-redux-firebase';
+import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { TextField, IconButton, Grid, Grow, Tooltip } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
@@ -22,15 +24,30 @@ const useStyles = makeStyles((theme) => ({
 
 
 const AddTextFields = (props) => {
-    const { addTextFields, notEditable, t } = props;
+    const { area, addTextFields, notEditable, t } = props;
 
     const [labelEditing, setLabelEditing] = useState(!addTextFields || addTextFields.length === 0);
 
+    const uid = useSelector(state => state.firebase.auth.uid);
+
+    useFirestoreConnect([
+        {
+            collection: 'addTextFields',
+            doc: uid
+        }
+    ]);
+
+    const fieldLabels = useSelector(state => state.firestore.data.addTextFields && state.firestore.data.addTextFields[uid][area]);
+
+    const getNextFieldLabel = () => {
+        return 'Hier weiter machen!'
+    }
+
     const addTextField = () => {
         if (Array.isArray(addTextFields)) {
-            props.onChanged(addTextFields.concat({ value: "", label: "" }));
+            props.onChanged(addTextFields.concat({ value: "", label: getNextFieldLabel() }));
         } else {
-            props.onChanged([{ value: "", label: "" }]);
+            props.onChanged([{ value: "", label: getNextFieldLabel() }]);
         }
     }
 
