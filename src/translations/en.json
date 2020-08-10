@@ -30,6 +30,5 @@
     "changeMaintenanceWork": "Change maintenance work",
     "addTextField": "Add text field",
     "removeTextField": "Remove text field",
-    "enableLabelEditing": "Display labels",
-    "disableLabelEditing": "Hide labels"
+    "labelEditing": "Edit labels"
 }

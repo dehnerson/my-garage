@@ -5,13 +5,14 @@ import { withTranslation } from 'react-i18next';
 import cloneDeep from 'lodash/cloneDeep';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
-import { Card, CardHeader, IconButton, Menu, MenuItem, CardContent, CardActions, TextField, Collapse, Fade, Grid, Slide } from '@material-ui/core';
-import { MoreVert, ExpandMore, Save, Clear } from '@material-ui/icons';
+import { Card, CardHeader, IconButton, Menu, MenuItem, CardContent, CardActions, TextField, Collapse, Fade, Grid } from '@material-ui/core';
+import { MoreVert, ExpandMore } from '@material-ui/icons';
 import { updateVehicle, deleteVehicle, addVehicleDocumentImages } from "../actions/vehicles";
 import VehicleAvatar from "./VehicleAvatar";
-import AddTextFields from "./AddTextFields";
+import AddTextFields from "./AddFields";
 import MaintenanceWork from "./MaintenanceWork";
 import ImageDropzone from "./ImageDropzone";
+import EditSaving from "./EditSaving";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -155,18 +156,11 @@ const Vehicle = (props) => {
                         <TextField inputProps={inputProps} variant="outlined" size="small" margin='dense' label={t('owner')} value={vehicle.owner}
                             onChange={e => setVehicleUpdate({ owner: e.target.value })} />
                     </CardContent>
-                    <CardActions disableSpacing>
-                        <div className={classes.cardActionsRight}>
-                            <Slide in={vehicleEdit} direction='up'>
-                                <div>
-                                    <IconButton aria-label="cancel" onClick={cancelVehicleUpdate}> <Clear /> </IconButton>
-                                    <IconButton aria-label="save" onClick={saveVehicleUpdate}> <Save /> </IconButton>
-                                </div>
-                            </Slide>
-                            <IconButton onClick={handleExpandClick} aria-expanded={expanded} aria-label="show more" className={clsx(classes.expand, { [classes.expandOpen]: expanded })}>
-                                <ExpandMore />
-                            </IconButton>
-                        </div>
+                    <CardActions disableSpacing className={classes.cardActionsRight}>
+                        <EditSaving enabled={vehicleEdit} onSave={saveVehicleUpdate} onCancel={cancelVehicleUpdate} />
+                        <IconButton onClick={handleExpandClick} aria-expanded={expanded} aria-label="show more" className={clsx(classes.expand, { [classes.expandOpen]: expanded })}>
+                            <ExpandMore />
+                        </IconButton>
                     </CardActions>
                     <Collapse in={expanded} timeout="auto">
                         <CardContent className={classes.addFieldsCardContent}>

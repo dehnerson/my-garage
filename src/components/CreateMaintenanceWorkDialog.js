@@ -7,7 +7,7 @@ import DateFnsUtils from '@date-io/date-fns';
 import fromUnixTime from 'date-fns/fromUnixTime';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
 import { setMaintenanceWork } from "../actions/maintenanceWork";
-import AddTextFields from "./AddTextFields";
+import AddTextFields from "./AddFields";
 import ProcedureMaintenance from "./ProcedureMaintenance";
 
 
@@ -76,7 +76,7 @@ const CreateMaintenanceWorkDialog = (props) => {
                                 />
                             </MuiPickersUtilsProvider>
                             <TextField variant="outlined" label="Mileage" type="number" margin="normal" value={mileage} onChange={e => setMaintenanceWorkElement('mileage', e.target.value)}></TextField>
-                            <AddTextFields addTextFields={addFields} onChanged={addFields => setMaintenanceWorkElement('addFields', addFields)} />
+                            <AddTextFields addTextFields={addFields} area={'maintenanceWork'} onChanged={addFields => setMaintenanceWorkElement('addFields', addFields)} />
                         </Grid>
                     </Container>
                 )

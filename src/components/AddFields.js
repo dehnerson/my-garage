@@ -4,9 +4,9 @@ import { useFirestoreConnect } from 'react-redux-firebase';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { TextField, IconButton, Grid, Grow, Tooltip } from '@material-ui/core';
+import ToggleButton from '@material-ui/lab/ToggleButton';
 import AddIcon from '@material-ui/icons/Add';
 import LabelIcon from '@material-ui/icons/Label';
-import LabelOffIcon from '@material-ui/icons/LabelOff';
 import RemoveIcon from '@material-ui/icons/Remove';
 
 
@@ -17,8 +17,10 @@ const useStyles = makeStyles((theme) => ({
     },
     item: {
         display: 'flex',
-        alignItems: 'center',
-        padding: theme.spacing(1, 0, 1, 0)
+        alignItems: 'center'
+    },
+    labelEditingButton: {
+        border: 'none'
     }
 }));
 
@@ -26,21 +28,31 @@ const useStyles = makeStyles((theme) => ({
 const AddTextFields = (props) => {
     const { area, addTextFields, notEditable, t } = props;
 
-    const [labelEditing, setLabelEditing] = useState(!addTextFields || addTextFields.length === 0);
+    const [labelEditing, setLabelEditing] = useState(false);
 
     const uid = useSelector(state => state.firebase.auth.uid);
 
     useFirestoreConnect([
         {
-            collection: 'addTextFields',
+            collection: 'addFields',
             doc: uid
         }
     ]);
 
-    const fieldLabels = useSelector(state => state.firestore.data.addTextFields && state.firestore.data.addTextFields[uid][area]);
+    const sortedFieldLabels = useSelector(state => {
+        if (state.firestore.data.addFields && state.firestore.data.addFields[uid] && state.firestore.data.addFields[uid][area]) {
+            return state.firestore.data.addFields[uid][area];
+        } else {
+            return [];
+        }
+    });
 
     const getNextFieldLabel = () => {
-        return 'Hier weiter machen!'
+        if (Array.isArray(addTextFields) && addTextFields.length > 0) {
+            return sortedFieldLabels.find(fieldLabel => !addTextFields.some(addTextField => addTextField.label === fieldLabel));
+        } else {
+            return sortedFieldLabels[0];
+        }
     }
 
     const addTextField = () => {
@@ -67,26 +79,21 @@ const AddTextFields = (props) => {
 
     const inputProps = { readOnly: notEditable };
 
+    const [valueEditing, setValueEditing] = useState(!labelEditing);
+
     return (
-        <Grid container spacing={2} justify="flex-start" className={classes.container}>
+        <Grid container spacing={1} justify="flex-start" className={classes.container}>
             {!notEditable &&
                 <Grid item xs={12} className={classes.item}>
                     <Tooltip title={t('addTextField')}>
                         <IconButton onClick={addTextField} > <AddIcon /></IconButton >
                     </Tooltip>
                     <Grow in={addTextFields && addTextFields.length > 0}>
-                        <div>
-                            <Grow in={!labelEditing} mountOnEnter unmountOnExit>
-                                <Tooltip title={t('enableLabelEditing')}>
-                                    <IconButton onClick={e => setLabelEditing(true)} > <LabelIcon /></IconButton >
-                                </Tooltip>
-                            </Grow>
-                            <Grow in={labelEditing} mountOnEnter unmountOnExit>
-                                <Tooltip title={t('disableLabelEditing')}>
-                                    <IconButton onClick={e => setLabelEditing(false)} > <LabelOffIcon /></IconButton >
-                                </Tooltip>
-                            </Grow>
-                        </div>
+                        <Tooltip title={t('labelEditing')}>
+                            <ToggleButton value="check" selected={labelEditing} onChange={() => { setLabelEditing(!labelEditing) }} className={classes.labelEditingButton}>
+                                <LabelIcon />
+                            </ToggleButton>
+                        </Tooltip>
                     </Grow>
                 </Grid>
             }
@@ -94,19 +101,20 @@ const AddTextFields = (props) => {
             {addTextFields && addTextFields.length > 0 && addTextFields.map((item, index) => (
                 <Grid key={index} item className={classes.item}>
                     {!notEditable &&
-                        <div>
+                        <Grow in={true} mountOnEnter unmountOnExit>
                             <Tooltip title={t('removeTextField')}>
                                 <IconButton onClick={e => removeTextField(index)}><RemoveIcon /></IconButton>
                             </Tooltip>
-                            <Grow in={labelEditing} mountOnEnter unmountOnExit>
-                                <TextField size="small" label="Label" value={item.label} onChange={e => changeTextField(index, { label: e.target.value })} />
-                            </Grow>
-                        </div>
+                        </Grow>
                     }
-                    <TextField inputProps={inputProps} variant="outlined" size="small" label={item.label} value={item.value} onChange={e => changeTextField(index, { value: e.target.value })} />
+                    <Grow in={labelEditing} mountOnEnter unmountOnExit onEnter={e => setValueEditing(false)} onExited={e => setValueEditing(true)}>
+                        <TextField size="small" margin='dense' label={"Label (" + item.value + ")"} value={item.label} onChange={e => changeTextField(index, { label: e.target.value })} />
+                    </Grow>
+                    <Grow in={valueEditing} mountOnEnter unmountOnExit>
+                        <TextField inputProps={inputProps} variant="outlined" size="small" margin='dense' label={item.label} value={item.value} onChange={e => changeTextField(index, { value: e.target.value })} />
+                    </Grow>
                 </Grid>
-            ))
-            }
+            ))}
         </Grid >
     )
 }

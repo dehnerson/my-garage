@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Tabs, Tab, TextField, IconButton, Container, Grid } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import RemoveIcon from '@material-ui/icons/Remove';
-import AddTextFields from './AddTextFields';
+import AddTextFields from './AddFields';
 
 
 const useStyles = makeStyles((theme) => ({

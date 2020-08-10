@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { withTranslation } from 'react-i18next';
 import { withStyles } from "@material-ui/styles";
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Slide, TextField, Container, Grid } from '@material-ui/core';
-import AddTextFields from "./AddTextFields";
+import AddTextFields from "./AddFields";
 import ImageDropzone from "./ImageDropzone";
 import { createVehicle } from "../actions/vehicles";
 
@@ -57,7 +57,7 @@ class CreateVehicleDialog extends Component {
                                 <TextField inputRef={ref => this.refVin = ref} variant="outlined" label={t('vin')}></TextField>
                             </Grid>
                         </Grid>
-                        <AddTextFields editLabel={true} addTextFields={this.state.addFields} onChanged={addFields => this.setState({ addFields: addFields })} />
+                        <AddTextFields area={'vehicle'} addTextFields={this.state.addFields} onChanged={addFields => this.setState({ addFields: addFields })} />
                         <ImageDropzone title={t('vehicleDocumentImages')} imageAmount={5} className={classes.documentsDropzone} files={this.state.vehicleDocumentImages} setFiles={newFiles => this.setState({ vehicleDocumentImages: newFiles })} />
                     </Container>
                 </DialogContent>
