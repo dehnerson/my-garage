@@ -4,6 +4,20 @@ const admin = require('firebase-admin');
 admin.initializeApp();
 
 
+exports.OnUserCreated = functions.region('europe-west1').auth.user().onCreate((user) => {
+
+    const db = admin.firestore();
+
+    return db.doc('addFields/starterPack').get().then(starterPackSnap => {
+        if (starterPackSnap.exists) {
+            return db.collection('addFields').doc(user.uid).set(starterPackSnap.data());
+        }
+
+        return null;
+    });
+});
+
+
 exports.handleVehicleUpdate = functions.region('europe-west1').firestore.document('vehicles/{vehicleId}').onUpdate((change, context) => {
     const updatedVehicle = change.after.data();
     const oldVehicle = change.before.data();
