@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
 const VehicleList = (props) => {
   const [createVehicleDialogOpen, setCreateVehicleDialogOpen] = useState(false);
 
-  const { t, title, vehicles, paperProps, showFab } = props;
+  const { t, title, vehicles, showFab } = props;
 
   const classes = useStyles();
 
@@ -34,7 +34,7 @@ const VehicleList = (props) => {
   }
 
   return (
-    <Paper component={"section"} {...paperProps}>
+    <Paper component={"section"}>
       {content}
       {showFab &&
         <Tooltip title={t('createVehicle')}>

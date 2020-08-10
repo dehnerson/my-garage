@@ -7,7 +7,7 @@ import VehicleList from "./VehicleList";
 
 const useStyles = makeStyles((theme) => ({
     spacer: {
-        marginTop: theme.spacing(3)
+        padding: theme.spacing(1, 0)
     }
 }));
 
@@ -23,8 +23,9 @@ const VehicleLists = (props) => {
     return (
         <article>
             <VehicleList title={t('myVehicles')} vehicles={myVehicles} showFab={true} />
+            <div className={classes.spacer} />
             {vehiclesSharedWithMe && vehiclesSharedWithMe.length > 0 &&
-                < VehicleList title={t('vehiclesSharedWithMe')} vehicles={vehiclesSharedWithMe} paperProps={{ className: classes.spacer }} />
+                < VehicleList title={t('vehiclesSharedWithMe')} vehicles={vehiclesSharedWithMe} />
             }
         </article>
     )
