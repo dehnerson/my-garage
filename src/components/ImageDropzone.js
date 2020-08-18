@@ -107,7 +107,7 @@ const ImageDropzone = (props) => {
 
     return (
         <div>
-            <Container maxWidth='sm' className={clsx(props.className, classes.dropzone, { [classes.dropzoneNotEditable]: props.notEditable })} {...getRootProps()}>
+            <Container maxWidth='sm' className={clsx(classes.dropzone, { [classes.dropzoneNotEditable]: props.notEditable })} {...getRootProps()}>
                 {!props.notEditable &&
                     <input {...getInputProps()} />
                 }

@@ -111,7 +111,7 @@ const AddTextFields = (props) => {
                         <TextField size="small" margin='dense' label={"Label (" + item.value + ")"} value={item.label} onChange={e => changeTextField(index, { label: e.target.value })} />
                     </Grow>
                     <Grow in={valueEditing} mountOnEnter unmountOnExit>
-                        <TextField inputProps={inputProps} variant="outlined" size="small" margin='dense' label={item.label} value={item.value} onChange={e => changeTextField(index, { value: e.target.value })} />
+                        <TextField inputProps={inputProps} variant="outlined" size="small" margin='dense' label={t(item.label)} value={item.value} onChange={e => changeTextField(index, { value: e.target.value })} />
                     </Grow>
                 </Grid>
             ))}
