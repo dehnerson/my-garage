@@ -5,31 +5,17 @@ import { withTranslation } from 'react-i18next';
 import cloneDeep from 'lodash/cloneDeep';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
-import { Card, CardHeader, IconButton, Menu, MenuItem, CardContent, CardActions, TextField, Collapse, Fade, Grid } from '@material-ui/core';
+import { Card, CardHeader, IconButton, Menu, MenuItem, CardContent, CardActions, Collapse, Fade, Grid } from '@material-ui/core';
 import { MoreVert, ExpandMore } from '@material-ui/icons';
 import { updateVehicle, deleteVehicle, addVehicleDocumentImages } from "../actions/vehicles";
 import VehicleAvatar from "./VehicleAvatar";
-import AddTextFields from "./AddFields";
+import AddFields from "./AddFields";
 import MaintenanceWork from "./MaintenanceWork";
 import ImageDropzone from "./ImageDropzone";
 import EditSaving from "./EditSaving";
 
 
 const useStyles = makeStyles((theme) => ({
-    mainCardContent: {
-        display: 'flex',
-        flexFlow: 'wrap',
-        paddingBottom: 0
-    },
-    break: {
-        flexBasis: '100%',
-        width: 0,
-        height: 0,
-        overflow: 'hidden'
-    },
-    addFieldsCardContent: {
-        paddingTop: 0
-    },
     cardActionsRight: {
         display: 'flex',
         marginLeft: 'auto',
@@ -130,8 +116,6 @@ const Vehicle = (props) => {
 
     const classes = useStyles();
 
-    const inputProps = { readOnly: !vehicleEditable };
-
     if (vehicle) {
         return (
             <Grid component={"article"} container direction="column" justify="flex-start" alignItems="stretch">
@@ -141,20 +125,7 @@ const Vehicle = (props) => {
                         action={<IconButton onClick={handleMenuOpen} aria-controls="fade-menu" aria-haspopup="true" aria-label="settings"><MoreVert /></IconButton>}>
                     </CardHeader >
                     <CardContent className={classes.mainCardContent}>
-                        <TextField inputProps={inputProps} variant="outlined" size="small" margin='dense' label={t('manufacturer')} value={vehicle.manufacturer}
-                            onChange={e => setVehicleUpdate({ manufacturer: e.target.value })} />
-                        <TextField inputProps={inputProps} variant="outlined" size="small" margin='dense' label={t('model')} value={vehicle.model}
-                            onChange={e => setVehicleUpdate({ model: e.target.value })} />
-                        <TextField inputProps={inputProps} variant="outlined" size="small" margin='dense' label={t('version')} value={vehicle.version}
-                            onChange={e => setVehicleUpdate({ version: e.target.value })} />
-                        <div className={classes.break} />
-                        <TextField inputProps={inputProps} variant="outlined" size="small" margin='dense' label={t('licensePlate')} value={vehicle.licensePlate}
-                            onChange={e => setVehicleUpdate({ licensePlate: e.target.value })} />
-                        <TextField inputProps={inputProps} variant="outlined" size="small" margin='dense' label={t('vin')} value={vehicle.vin}
-                            onChange={e => setVehicleUpdate({ vin: e.target.value })} />
-                        <div className={classes.break} />
-                        <TextField inputProps={inputProps} variant="outlined" size="small" margin='dense' label={t('owner')} value={vehicle.owner}
-                            onChange={e => setVehicleUpdate({ owner: e.target.value })} />
+                        <AddFields notEditable={!vehicleEditable} area={'vehicle'} addTextFields={vehicle.addFields} onChanged={newAddFields => setVehicleUpdate({ addFields: newAddFields })} />
                     </CardContent>
                     <CardActions disableSpacing className={classes.cardActionsRight}>
                         <EditSaving enabled={vehicleEdit} onSave={saveVehicleUpdate} onCancel={cancelVehicleUpdate} />
@@ -164,11 +135,12 @@ const Vehicle = (props) => {
                     </CardActions>
                     <Collapse in={expanded} timeout="auto">
                         <CardContent className={classes.addFieldsCardContent}>
-                            <AddTextFields notEditable={!vehicleEditable} area={'vehicle'} addTextFields={vehicle.addFields} onChanged={newAddFields => setVehicleUpdate({ addFields: newAddFields })} />
-                            <ImageDropzone title={t('vehicleDocumentImages')} imageAmount={5} className={classes.images}
-                                images={vehicle.documentImages} setImages={newImages => setVehicleUpdate({ documentImages: newImages })}
-                                files={newDocumentImages} setFiles={handleNewDocumentImages}
-                                notEditable={!vehicleEditable} />
+                            <div className={classes.images}>
+                                <ImageDropzone title={t('vehicleDocumentImages')} imageAmount={5}
+                                    images={vehicle.documentImages} setImages={newImages => setVehicleUpdate({ documentImages: newImages })}
+                                    files={newDocumentImages} setFiles={handleNewDocumentImages}
+                                    notEditable={!vehicleEditable} />
+                            </div>
                         </CardContent>
                     </Collapse>
                 </Card >
