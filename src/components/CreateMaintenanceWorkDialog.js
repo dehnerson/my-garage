@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { withTranslation } from 'react-i18next';
 import { makeStyles } from '@material-ui/core/styles';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Slide, Stepper, Step, StepLabel, Container } from '@material-ui/core';
-import { setMaintenanceWork as setMaintenanceWorkDB } from "../actions/maintenanceWork";
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Slide, Stepper, Step, StepLabel, Container, Box, useMediaQuery, useTheme } from '@material-ui/core';
+import { setMaintenanceWork as setMaintenanceWorkDB, deleteMaintenanceWork } from "../actions/maintenanceWork";
 import Fields from "./Fields";
 import ProcedureMaintenance from "./ProcedureMaintenance";
 
@@ -14,7 +14,11 @@ const useStyles = makeStyles((theme) => ({
         paddingRight: 0
     },
     cancelButton: {
-        marginRight: theme.spacing(4)
+        marginRight: theme.spacing(4),
+        marginLeft: "auto"
+    },
+    dialogButton: {
+        marginRight: theme.spacing(1)
     }
 }));
 
@@ -55,6 +59,11 @@ const CreateMaintenanceWorkDialog = (props) => {
         }
     };
 
+    const handleDelete = () => {
+        dispatch(deleteMaintenanceWork(vehicleID, maintenanceWorkID));
+        onClose();
+    };
+
     const handleBack = () => {
         setActiveStep((prevActiveStep) => prevActiveStep - 1);
     };
@@ -80,7 +89,7 @@ const CreateMaintenanceWorkDialog = (props) => {
         switch (activeStep) {
             case 0:
                 return (
-                    <Container maxWidth="lg">
+                    <Container maxWidth="lg" >
                         <Fields fields={maintenanceWork?.fields} area={'maintenanceWork'} creationMode={!Boolean(maintenanceWorkID)} onChanged={newFields => setMaintenanceWorkElement('fields', newFields)} />
                     </Container>
                 )
@@ -97,8 +106,11 @@ const CreateMaintenanceWorkDialog = (props) => {
         }
     }
 
+    const theme = useTheme();
+    const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
+
     return (
-        <Dialog fullScreen open={open} TransitionComponent={Transition} onClose={onClose} onExited={onExited} aria-labelledby="alert-dialog-slide-title" aria-describedby="alert-dialog-slide-description">
+        <Dialog fullScreen={fullScreen} maxWidth="lg" fullWidth open={open} TransitionComponent={Transition} onClose={onClose} TransitionProps={{ onExited: onExited }} aria-labelledby="alert-dialog-slide-title" aria-describedby="alert-dialog-slide-description">
             <DialogTitle id="alert-dialog-slide-title">{maintenanceWorkID ? t('changeMaintenanceWork') : t('addMaintenanceWork')}</DialogTitle>
             <Stepper activeStep={activeStep} alternativeLabel>
                 {steps.map((label, index) => {
@@ -113,9 +125,14 @@ const CreateMaintenanceWorkDialog = (props) => {
                 {getStepContent()}
             </DialogContent>
             <DialogActions>
-                <Button onClick={onClose} className={classes.cancelButton}>Cancel</Button>
-                <Button disabled={activeStep === 0} onClick={handleBack}>Back</Button>
-                <Button onClick={handleNextAdd}>{activeStep !== steps.length - 1 ? 'Next' : maintenanceWorkID ? 'Change' : 'Add'}</Button>
+                <Box display="flex" width="-webkit-fill-available">
+                    {maintenanceWorkID &&
+                        <Button onClick={handleDelete} className={classes.dialogButton}>Delete</Button>
+                    }
+                    <Button onClick={onClose} className={classes.cancelButton}>Cancel</Button>
+                    <Button disabled={activeStep === 0} onClick={handleBack} className={classes.dialogButton}>Back</Button>
+                    <Button onClick={handleNextAdd}>{activeStep !== steps.length - 1 ? 'Next' : maintenanceWorkID ? 'Change' : 'Add'}</Button>
+                </Box>
             </DialogActions>
         </Dialog>
     )

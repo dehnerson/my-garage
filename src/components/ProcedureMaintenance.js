@@ -24,17 +24,20 @@ const ProcedureMaintenanceNew = (props) => {
     const { procedures, onProceduresChanged, creationMode, t } = props;
 
     const [hoveredItemIndex, setHoveredItemIndex] = React.useState();
+    const [newWork, setNewWork] = React.useState();
 
     const handleSubmit = (event) => {
         event.preventDefault();
 
+        if (!newWork) return;
+
         if (Array.isArray(procedures)) {
-            onProceduresChanged(procedures.concat({ fields: { work: event.target[0].value } }));
+            onProceduresChanged(procedures.concat({ fields: { work: newWork } }));
         } else {
-            onProceduresChanged([{ fields: { work: event.target[0].value } }]);
+            onProceduresChanged([{ fields: { work: newWork } }]);
         }
 
-        event.target[0].value = null;
+        setNewWork("");
     }
 
     const handleRemoveProcedure = (e, index) => {
@@ -59,10 +62,17 @@ const ProcedureMaintenanceNew = (props) => {
         <Box display='flex' flexDirection='column'>
             <form onSubmit={handleSubmit} className={classes.form}>
                 <TextField placeholder={t('addWork')} variant="filled" size="small" hiddenLabel aria-label={t('addWork')}
+                    value={newWork}
+                    onChange={(event) => setNewWork(event.target.value)}
                     InputProps={{
                         startAdornment: (
                             <InputAdornment position="start">
-                                <AddCircle />
+                                <IconButton
+                                    onClick={handleSubmit}
+                                    edge="start"
+                                >
+                                    <AddCircle />
+                                </IconButton>
                             </InputAdornment>
                         ),
                     }} />
@@ -72,8 +82,8 @@ const ProcedureMaintenanceNew = (props) => {
                     <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-label="Expand" aria-controls="additional-actions1-content" id="additional-actions1-header" onMouseEnter={e => setHoveredItemIndex(index)} onMouseLeave={e => setHoveredItemIndex(null)}>
                         <Typography className={classes.text}>{procedure.fields?.work}</Typography>
                         <Fade in={index === hoveredItemIndex} className={classes.removeButton}>
-                        <Tooltip title={t('remove') + " " + procedure.fields?.work}>
-                            <IconButton onClick={e => handleRemoveProcedure(e, index)} onFocus={e => e.stopPropagation()}><RemoveCircle /></IconButton>
+                            <Tooltip title={t('remove') + " " + procedure.fields?.work}>
+                                <IconButton onClick={e => handleRemoveProcedure(e, index)} onFocus={e => e.stopPropagation()}><RemoveCircle /></IconButton>
                             </Tooltip>
                         </Fade>
                     </AccordionSummary>

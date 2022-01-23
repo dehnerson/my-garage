@@ -8,7 +8,7 @@ const Footer = (props) => {
   const { classes } = props;
 
   return (
-    <Grid component={'footer'} container direction="column" justify="center" className={clsx(classes.footer, classes.appBarHeighter)}>
+    <Grid component={'footer'} container direction="column" justifyContent="center" className={clsx(classes.footer, classes.appBarHeighter)}>
       <Typography variant="body2" color="textSecondary" align="center">Copyright © <Link color="inherit" href="/">My Garage</Link> {new Date().getFullYear()}</Typography>
     </Grid>
   );

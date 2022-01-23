@@ -123,7 +123,7 @@ const Vehicle = (props) => {
 
     if (vehicle) {
         return (
-            <Grid component={"article"} container direction="column" justify="flex-start" alignItems="stretch">
+            <Grid component={"article"} container direction="column" justifyContent="flex-start" alignItems="stretch">
                 <Card component={"section"}>
                     <CardHeader avatar={<VehicleAvatar title={vehicle.primaryTitle} sourceUrl={vehicle.image && vehicle.image.url} />}
                         title={vehicle.primaryTitle}

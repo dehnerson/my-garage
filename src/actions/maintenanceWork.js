@@ -25,3 +25,20 @@ export const setMaintenanceWork = (vehicleID, maintenanceWorkID, maintenanceWork
             .catch((error) => dispatch({ type: SET_MAINTENANCE_WORK_ERROR, error }));
     }
 }
+
+export const deleteMaintenanceWork = (vehicleID, maintenanceWorkID) => {
+
+    return (dispatch, _getState, { getFirebase }) => {
+        if (!vehicleID || !maintenanceWorkID) {
+            dispatch({ type: SET_MAINTENANCE_WORK_ERROR });
+            return;
+        }
+
+        dispatch({ type: SET_MAINTENANCE_WORK_REQUEST });
+
+        const fb = getFirebase();
+
+        fb.firestore().collection("vehicles").doc(vehicleID).collection("maintenanceWork").doc(maintenanceWorkID).delete().then(() => dispatch({ type: SET_MAINTENANCE_WORK_SUCCESS }))
+            .catch((error) => dispatch({ type: SET_MAINTENANCE_WORK_ERROR, error }));
+    }
+}

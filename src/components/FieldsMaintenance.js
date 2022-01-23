@@ -4,7 +4,7 @@ import { useFirestoreConnect } from 'react-redux-firebase';
 import { useSelector, useDispatch } from 'react-redux';
 import { updateFieldsAdd } from "../actions/fields";
 import { useTheme } from '@material-ui/core/styles';
-import { Card, CardHeader, CardContent, Tabs, Tab, TextField, InputAdornment, useMediaQuery, Box } from '@material-ui/core';
+import { Card, CardHeader, CardContent, Tabs, Tab, TextField, InputAdornment, useMediaQuery, Box, IconButton } from '@material-ui/core';
 import { AddCircle } from "@material-ui/icons";
 import SortableList from './SortableList';
 import EditSaving from "./EditSaving";
@@ -15,6 +15,7 @@ const FieldsMaintenance = (props) => {
 
     const [currentTabIndex, setCurrentTabIndex] = useState(0);
     const [fieldsAdd, setFieldsAdd] = useState();
+    const [newField, setNewField] = useState();
     const [edited, setEdited] = useState(false);
 
     const uid = useSelector(state => state.firebase.auth.uid);
@@ -43,17 +44,20 @@ const FieldsMaintenance = (props) => {
 
     const handleSubmit = (event) => {
         event.preventDefault();
+
+        if (!newField) return;
+
         setEdited(true);
 
         setFieldsAdd(Array.from(fieldsAdd, (each, i) => {
             if (currentTabIndex === i) {
-                return { ...each, fields: each.fields.concat({ label: event.target[0].value }) }
+                return { ...each, fields: each.fields.concat({ label: newField }) }
             } else {
                 return each;
             }
         }));
 
-        event.target[0].value = null;
+        setNewField("");
     }
 
     const onListChange = (index, newItems) => {
@@ -92,10 +96,17 @@ const FieldsMaintenance = (props) => {
                     <Box marginTop='8px'>
                         <form onSubmit={handleSubmit}>
                             <TextField placeholder="Add field" variant="filled" size="small" hiddenLabel aria-label="Add field"
+                                value={newField}
+                                onChange={(event) => setNewField(event.target.value)}
                                 InputProps={{
                                     startAdornment: (
                                         <InputAdornment position="start">
-                                            <AddCircle />
+                                            <IconButton
+                                                onClick={handleSubmit}
+                                                edge="start"
+                                            >
+                                                <AddCircle />
+                                            </IconButton>
                                         </InputAdornment>
                                     ),
                                 }} />

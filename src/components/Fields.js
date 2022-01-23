@@ -99,7 +99,7 @@ const Fields = (props) => {
     const freeFieldsAvailable = freeFields.length > 0;
 
     return (
-        <Grid container spacing={1} justify="flex-start" className={classes.container}>
+        <Grid container spacing={1} justifyContent="flex-start" className={classes.container}>
             {!notEditable &&
                 <Grid item xs={12} className={classes.item}>
                     <SplitButton tooltipMain={freeFieldsAvailable ? t('add') + " " + t(freeFields[0].label) : t('addFields')} onMainClick={e => freeFieldsAvailable ? addTextField(freeFields[0]) : setDialogOpen(true)}

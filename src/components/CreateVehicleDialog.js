@@ -60,7 +60,7 @@ const CreateVehicleDialog = (props) => {
     const classes = useStyles();
 
     return (
-        <Dialog fullScreen open={open} TransitionComponent={Transition} onClose={handleClose} onExited={onExited} aria-labelledby="alert-dialog-slide-title" aria-describedby="alert-dialog-slide-description">
+        <Dialog fullScreen open={open} TransitionComponent={Transition} onClose={handleClose} TransitionProps={{ onExited: onExited }} aria-labelledby="alert-dialog-slide-title" aria-describedby="alert-dialog-slide-description">
             <DialogTitle id="alert-dialog-slide-title">{t('createVehicle')}</DialogTitle>
             <DialogContent dividers className={classes.dialogContent}>
                 <Container maxWidth='md' className={classes.container}>
